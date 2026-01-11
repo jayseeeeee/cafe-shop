@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Item extends Card {
     Item(Product product) {
-        super(product, 128, 128, 164, 32);
+        super(product, 128, 128, 168, 32);
         setPreferredSize(new Dimension(172, 230));
 
         JLabel itemDescription = new JLabel(String.format("<html>%s</html>", product.description));
