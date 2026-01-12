@@ -37,7 +37,7 @@ public class Main {
                 if (object.length == 5) {
                     new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy());
                 } else {
-                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy(object[5].split(",")));
+                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy(object[5]));
                 }
             }
         } catch(FileNotFoundException e){

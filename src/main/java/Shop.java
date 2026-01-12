@@ -47,6 +47,10 @@ public class Shop extends JFrame {
         JLabel logo = new JLabel(logoImage);
         logoPanel.add(logo);
 
+//        TODO: CREATE ADMIN DASHBOARD
+//        JButton accessAdmin = new JButton();
+//        logoPanel.add(accessAdmin);
+//
         add(logoPanel, BorderLayout.NORTH);
 
         JPanel main = new JPanel();
