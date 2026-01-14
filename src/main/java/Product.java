@@ -1,4 +1,7 @@
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Product {
@@ -8,7 +11,7 @@ public class Product {
     String name;
     String category;
     String description;
-    URL imagePath;
+    Path imagePath;
     double cost;
     Allergy allergies;
     Item item;
@@ -18,11 +21,9 @@ public class Product {
         this.name = name;
         this.category = category;
         this.description = description;
-        this.imagePath = getClass().getResource(String.format("assets/%s", imagePath));
         this.cost = cost;
-        if (this.imagePath == null) {
-            this.imagePath = getClass().getResource("assets/no-image.png");
-        }
+        this.imagePath = new File(Shop.IMAGE_FOLDER, imagePath).toPath();
+//        this.imagePath = getClass().getResource("assets/no-image.png");
         listOfProducts.add(this);
         item = new Item(this);
         basket = new Basket(this);

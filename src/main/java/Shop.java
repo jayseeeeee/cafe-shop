@@ -1,9 +1,14 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.io.*;
 import java.util.*;
 
 public class Shop extends JFrame {
+    public final static String USER_DIRECTORY = System.getProperty("user.home");
+    public final static File PROGRAM_FOLDER = new File(USER_DIRECTORY, "Documents\\My Shop");
+    public final static File IMAGE_FOLDER = new File(PROGRAM_FOLDER + "\\Image");
+    public final static File CSV_FILE = new File(PROGRAM_FOLDER, "Products.csv");;
     public final static LineBorder BORDER_STYLE = new LineBorder(new Color(0xFFCFCFCF, true), 1, true);
     public final static Color MAIN_COLOR = new Color(0xFAFAFA);
     public final static String FONT = "Helvetica";
@@ -31,6 +36,8 @@ public class Shop extends JFrame {
     private Discount discount;
 
     Shop() {
+        getProductCsv();
+
         Image icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("assets/brand_icon.png"))).getImage();
         setIconImage(icon);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,19 +45,13 @@ public class Shop extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
 
-        JPanel logoPanel = new JPanel();
+        JPanel logoPanel = new JPanel(new BorderLayout());
         logoPanel.setBackground(new Color(0xF3F3F3));
         logoPanel.setPreferredSize(new Dimension(1280,72));
-        logoPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 
         ImageIcon logoImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("assets/brand_logo.png")));
         JLabel logo = new JLabel(logoImage);
-        logoPanel.add(logo);
-
-//        TODO: CREATE ADMIN DASHBOARD
-//        JButton accessAdmin = new JButton();
-//        logoPanel.add(accessAdmin);
-//
+        logoPanel.add(logo, BorderLayout.WEST);
         add(logoPanel, BorderLayout.NORTH);
 
         JPanel main = new JPanel();
@@ -286,6 +287,53 @@ public class Shop extends JFrame {
         updateSelection();
         this.add(main, BorderLayout.CENTER);
         this.setVisible(true);
+    }
+
+    private void getProductCsv() {
+        PROGRAM_FOLDER.mkdir();
+        IMAGE_FOLDER.mkdir();
+
+        String configMessage = """
+                It seems that you are launching this software for the first time.
+                Configure the 'Product.csv' under 'My Shop' folder in your Documents folder first.
+                Relaunch the program after configuration.
+                """;
+        try(BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE))) {
+            String line;
+            String[] object;
+            reader.readLine();
+            while((line = reader.readLine()) != null) {
+                object = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                System.out.println(Arrays.toString(object));
+                if (object.length == 5) {
+                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy());
+                } else {
+                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy(object[5]));
+                }
+            }
+        } catch(FileNotFoundException e){
+            JOptionPane.showMessageDialog(null, configMessage, "New Configuration", JOptionPane.INFORMATION_MESSAGE);
+            createCsvFile(CSV_FILE);
+            System.exit(0);
+            IO.println(e);
+            IO.println("Error: File location could not be located.");
+        } catch(IOException e){
+            IO.println(e);
+            IO.println("Error: File could not be read.");
+        }
+    }
+
+    private void createCsvFile(File csvFile) {
+        try(FileWriter writer = new FileWriter(csvFile)) {
+            writer.write("Name,Category,Description,Image,Price,Allergies");
+            IO.println("File has been successfully written!");
+        } catch(FileNotFoundException e){
+            IO.println(e);
+            IO.println("Error: File location could not be located.");
+        } catch(IOException e){
+            IO.println(e);
+            IO.println("Error: File could not be written.");
+        }
     }
 
     private JLabel getInitialCostText() {

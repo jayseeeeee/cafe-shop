@@ -12,7 +12,7 @@ public abstract class Card extends JPanel {
         setBackground(Color.white);
         setBorder(Shop.BORDER_STYLE);
 
-        Image loadImage = new ImageIcon(product.imagePath).getImage().getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+        Image loadImage = new ImageIcon(product.imagePath.toString()).getImage().getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
         cardImage = new JLabel(new ImageIcon(loadImage));
 
         textContainer = new JPanel(new FlowLayout(FlowLayout.LEADING));
