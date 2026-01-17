@@ -8,7 +8,7 @@ public class Shop extends JFrame {
     public final static String USER_DIRECTORY = System.getProperty("user.home");
     public final static File PROGRAM_FOLDER = new File(USER_DIRECTORY, "Documents\\My Shop");
     public final static File IMAGE_FOLDER = new File(PROGRAM_FOLDER + "\\Image");
-    public final static File CSV_FILE = new File(PROGRAM_FOLDER, "Products.csv");;
+    public final static File CSV_FILE = new File(PROGRAM_FOLDER, "Products.csv");
     public final static LineBorder BORDER_STYLE = new LineBorder(new Color(0xFFCFCFCF, true), 1, true);
     public final static Color MAIN_COLOR = new Color(0xFAFAFA);
     public final static String FONT = "Helvetica";
@@ -306,7 +306,7 @@ public class Shop extends JFrame {
                 object = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                 System.out.println(Arrays.toString(object));
                 if (object.length == 5) {
-                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy());
+                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]));
                 } else {
                     new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy(object[5]));
                 }

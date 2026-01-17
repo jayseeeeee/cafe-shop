@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,19 +13,22 @@ public class Product {
     String name;
     String category;
     String description;
-    Path imagePath;
+    Image image;
     double cost;
     Allergy allergies;
     Item item;
     Basket basket;
 
     private void newProduct(String name, String category, String description, String imagePath, double cost) {
+        String imageLocation = Shop.IMAGE_FOLDER + "\\" + imagePath;
         this.name = name;
         this.category = category;
         this.description = description;
         this.cost = cost;
-        this.imagePath = new File(Shop.IMAGE_FOLDER, imagePath).toPath();
-//        this.imagePath = getClass().getResource("assets/no-image.png");
+        this.image = new ImageIcon(imageLocation).getImage();
+        if (!new File(imageLocation).exists()) {
+            this.image = new ImageIcon(getClass().getResource("assets/no-image.png")).getImage();
+        }
         listOfProducts.add(this);
         item = new Item(this);
         basket = new Basket(this);
