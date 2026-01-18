@@ -8,7 +8,8 @@ public class Shop extends JFrame {
     public final static String USER_DIRECTORY = System.getProperty("user.home");
     public final static File PROGRAM_FOLDER = new File(USER_DIRECTORY, "Documents\\My Shop");
     public final static File IMAGE_FOLDER = new File(PROGRAM_FOLDER + "\\Image");
-    public final static File CSV_FILE = new File(PROGRAM_FOLDER, "Products.csv");
+    public final static File PRODUCT_CSV = new File(PROGRAM_FOLDER, "Products.csv");
+    public final static File DISCOUNT_CSV = new File(PROGRAM_FOLDER, "Discounts.csv");
     public final static LineBorder BORDER_STYLE = new LineBorder(new Color(0xFFCFCFCF, true), 1, true);
     public final static Color MAIN_COLOR = new Color(0xFAFAFA);
     public final static String FONT = "Helvetica";
@@ -36,7 +37,10 @@ public class Shop extends JFrame {
     private Discount discount;
 
     Shop() {
-        getProductCsv();
+        PROGRAM_FOLDER.mkdir();
+        IMAGE_FOLDER.mkdir();
+        readCsvFile(PRODUCT_CSV);
+        readCsvFile(DISCOUNT_CSV);
 
         Image icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("assets/brand_icon.png"))).getImage();
         setIconImage(icon);
@@ -289,34 +293,29 @@ public class Shop extends JFrame {
         this.setVisible(true);
     }
 
-    private void getProductCsv() {
-        PROGRAM_FOLDER.mkdir();
-        IMAGE_FOLDER.mkdir();
-
+    private void readCsvFile(File csvFile) {
         String configMessage = """
-                It seems that you are launching this software for the first time.
-                Configure the 'Product.csv' under 'My Shop' folder in your Documents folder first.
+                Configure the CSV files under 'My Shop' folder in your Documents folder.
                 Relaunch the program after configuration.
                 """;
-        try(BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
             String line;
-            String[] object;
+            String[] data;
             reader.readLine();
             while((line = reader.readLine()) != null) {
-                object = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                System.out.println(Arrays.toString(object));
-                if (object.length == 5) {
-                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]));
-                } else {
-                    new Product(object[0], object[1], object[2], object[3], Double.parseDouble(object[4]), new Allergy(object[5]));
+                data = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (csvFile.equals(PRODUCT_CSV)) {
+                    new Product(data[0], data[1], data[2], data[3], Double.parseDouble(data[4]), new Allergy(data[5]));
+                } else if (csvFile.equals(DISCOUNT_CSV)) {
+                    new Discount(data[0], Integer.parseInt(data[1]), Boolean.parseBoolean(data[2]), Integer.parseInt(data[3]));
                 }
             }
         } catch(FileNotFoundException e){
             JOptionPane.showMessageDialog(null, configMessage, "New Configuration", JOptionPane.INFORMATION_MESSAGE);
-            createCsvFile(CSV_FILE);
-            System.exit(0);
+            createCsvFile(csvFile);
             IO.println(e);
             IO.println("Error: File location could not be located.");
+            System.exit(0);
         } catch(IOException e){
             IO.println(e);
             IO.println("Error: File could not be read.");
@@ -324,8 +323,12 @@ public class Shop extends JFrame {
     }
 
     private void createCsvFile(File csvFile) {
-        try(FileWriter writer = new FileWriter(csvFile)) {
-            writer.write("Name,Category,Description,Image,Price,Allergies");
+        try(FileWriter writer = new FileWriter(csvFile);) {
+            if (csvFile.equals(PRODUCT_CSV)) {
+                writer.write("Name,Category,Description,Image,Price,Allergies");
+            } else if (csvFile.equals(DISCOUNT_CSV)) {
+                writer.write("Voucher Code,Discount Amount,Percentage,Uses");
+            }
             IO.println("File has been successfully written!");
         } catch(FileNotFoundException e){
             IO.println(e);
@@ -480,7 +483,7 @@ public class Shop extends JFrame {
 
     private boolean isAllergyMatch(Allergy allergy) {
         for (String allergyFilter : allergyFilterResult.keySet()) {
-            if (allergy.productAllergies.contains(allergyFilter)) {
+            if (allergy == null || allergy.productAllergies.contains(allergyFilter)) {
                 return true;
             }
         }

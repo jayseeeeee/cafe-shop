@@ -19,12 +19,13 @@ public class Product {
     Item item;
     Basket basket;
 
-    private void newProduct(String name, String category, String description, String imagePath, double cost) {
+    public Product(String name, String category, String description, String imagePath, double cost, Allergy allergies) {
         String imageLocation = Shop.IMAGE_FOLDER + "\\" + imagePath;
         this.name = name;
         this.category = category;
         this.description = description;
         this.cost = cost;
+        this.allergies = allergies;
         this.image = new ImageIcon(imageLocation).getImage();
         if (!new File(imageLocation).exists()) {
             this.image = new ImageIcon(getClass().getResource("assets/no-image.png")).getImage();
@@ -32,16 +33,6 @@ public class Product {
         listOfProducts.add(this);
         item = new Item(this);
         basket = new Basket(this);
-    }
-
-    public Product(String name, String category, String description, String imagePath, double cost, Allergy allergies) {
-        newProduct(name, category, description, imagePath, cost);
-        this.allergies = allergies;
-    }
-
-    public Product(String name, String category, String description, String imagePath, double cost) {
-        newProduct(name, category, description, imagePath, cost);
-        this.allergies = new Allergy();
     }
 
     public static void setShop(Shop shop) {
