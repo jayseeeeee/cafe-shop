@@ -14,9 +14,6 @@ public class Main {
             IO.println(e);
         }
 
-        new Discount("OliviaRodrigoDuterte2025", 20, true, -1);
-        new Discount("Dookie$", 20, false, 1);
-
         Shop shop = new Shop();
         Product.setShop(shop);
     }

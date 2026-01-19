@@ -301,14 +301,10 @@ public class Shop extends JFrame {
         try(BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
             String line;
             String[] data;
-            reader.readLine();
+            reader.readLine(); // Skip header
             while((line = reader.readLine()) != null) {
                 data = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (csvFile.equals(PRODUCT_CSV)) {
-                    new Product(data[0], data[1], data[2], data[3], Double.parseDouble(data[4]), new Allergy(data[5]));
-                } else if (csvFile.equals(DISCOUNT_CSV)) {
-                    new Discount(data[0], Integer.parseInt(data[1]), Boolean.parseBoolean(data[2]), Integer.parseInt(data[3]));
-                }
+                createObjectFromCsv(data, csvFile);
             }
         } catch(FileNotFoundException e){
             JOptionPane.showMessageDialog(null, configMessage, "New Configuration", JOptionPane.INFORMATION_MESSAGE);
@@ -319,6 +315,18 @@ public class Shop extends JFrame {
         } catch(IOException e){
             IO.println(e);
             IO.println("Error: File could not be read.");
+        }
+    }
+
+    private void createObjectFromCsv(String[] data, File csvFile) {
+        if (csvFile.equals(PRODUCT_CSV)) {
+            if (data.length == 6) {
+                new Product(data[0], data[1], data[2], data[3], Double.parseDouble(data[4]), new Allergy(data[5]));
+            } else {
+                new Product(data[0], data[1], data[2], data[3], Double.parseDouble(data[4]), null);
+            }
+        } else if (csvFile.equals(DISCOUNT_CSV)) {
+            new Discount(data[0], Integer.parseInt(data[1]), Boolean.parseBoolean(data[2]), Integer.parseInt(data[3]));
         }
     }
 
@@ -483,7 +491,9 @@ public class Shop extends JFrame {
 
     private boolean isAllergyMatch(Allergy allergy) {
         for (String allergyFilter : allergyFilterResult.keySet()) {
-            if (allergy == null || allergy.productAllergies.contains(allergyFilter)) {
+            if (allergy == null) {
+                break;
+            } else if (allergy.productAllergies.contains(allergyFilter)) {
                 return true;
             }
         }

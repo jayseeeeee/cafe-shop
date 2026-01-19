@@ -6,8 +6,6 @@ public class Allergy {
     static HashSet<String> listOfAllergies = new HashSet<>();
     ArrayList<String> productAllergies = new ArrayList<>();
 
-    Allergy() {}
-
     Allergy(String productAllergies) {
         String removeQuotation = productAllergies.replaceAll("\"", "");
         String[] allergies = removeQuotation.split(",\\s*");
